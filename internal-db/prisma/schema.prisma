@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../generated/int"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model log_channels {
+  id          String  @id
+  name        String
+  description String?
+  color       String?
+  icon        String?
+  logs        logs[]
+}
+
+model logs {
+  id           String       @id
+  channel      String
+  type         Int
+  data         Json?
+  timestamp    DateTime     @default(now()) @db.Timestamp(6)
+  log_channels log_channels @relation(fields: [channel], references: [id], onDelete: Cascade)
+}
