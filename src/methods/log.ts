@@ -42,7 +42,7 @@ export async function createLog(
       await sendDiscordMessage(
         {
           title: "New Debugging Session",
-          description: `Session ID: ${body.id}\nIP: ${body.ip}\n\n\`\`\`\n${JSON.stringify(body.data)}\`\`\``,
+          description: `Session ID: ${body.id}\nIP: ${body.ip}\n\n\`\`\`json\n${JSON.stringify(body.data, null, 2)}\`\`\``,
           footer: { text: `ID: ${id}` },
           color: 0x00ff00,
         },
