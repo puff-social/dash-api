@@ -10,4 +10,7 @@ export const env = envsafe({
   REDIS_URI: str({
     desc: "Redis Server URI",
   }),
+  ALERT_DISCORD_WEBHOOK_URL: str({
+    desc: "Discord Webhook URL for alerts",
+  }),
 });

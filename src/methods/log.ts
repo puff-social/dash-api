@@ -3,10 +3,11 @@ import { LogTypes, logValidation } from "../validation";
 import { ZodError } from "zod";
 import { pika } from "../pika";
 import { prisma } from "../connectivity/prisma";
+import { sendDiscordMessage } from "../discord";
 
 export async function createLog(
   req: FastifyRequest<{ Querystring: { type: number; channel: string } }>,
-  res: FastifyReply
+  res: FastifyReply,
 ) {
   let { type, channel } = req.query;
   type = Number(type);
@@ -37,6 +38,18 @@ export async function createLog(
       },
     });
 
+    if (type == LogTypes.NewDebuggingSession && "data" in body) {
+      await sendDiscordMessage(
+        {
+          title: "New Debugging Session",
+          description: `Session ID: ${body.id}\nIP: ${body.ip}\n\n\`\`\`\n${JSON.stringify(body.data)}\`\`\``,
+          footer: { text: `ID: ${id}` },
+          color: 0x00ff00,
+        },
+        "Debugging Sessions",
+      );
+    }
+
     return res.status(204).send();
   } catch (error) {
     if (error instanceof ZodError) {
@@ -63,7 +76,7 @@ export async function getLogsInChannel(
     Params: { id: string };
     Querystring: { limit: number; after: string };
   }>,
-  res: FastifyReply
+  res: FastifyReply,
 ) {
   const { limit, after } = req.query;
 
